@@ -1,4 +1,4 @@
-21896034168619999
+21897726666637104
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -90593,6 +90593,13 @@ Variable Resistor
 0
 3
 3
+iclr
+PETE_LOGO
+
+
+0
+0
+0
 iclr
 PHOENIX_1757242
 
