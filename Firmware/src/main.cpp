@@ -2,6 +2,8 @@
 #include "freertos/task.h"
 #include "esp_task_wdt.h"
 
+// #include <sprofiler.h>
+
 #include <Arduino.h>
 #define ARDUINO_LOOP_STACK_SIZE 8192
 
@@ -19,22 +21,26 @@ TaskHandle_t loopTaskHandle = NULL;
 
 System ricSystem;
 
-
 void setup_task()
 {
     //MUST CALL CORE SYSTEM SETUP
     ricSystem.coreSystemSetup();
+    // setup();
+   
 }
 
 void inner_loop_task()
 {
     //must call core system update
     ricSystem.coreSystemUpdate();
+    // loop();
+   
 }
 
 void loopTask(void *pvParameters)
 {
     // esp_log_level_set("*", ESP_LOG_INFO); 
+    // sprofiler_initialize(100);
     setup_task();
     for(;;) {
         inner_loop_task();
@@ -44,6 +50,7 @@ void loopTask(void *pvParameters)
 
 extern "C" void app_main()
 {
+    
     initArduino(); //probably dont even need this
     xTaskCreateUniversal(loopTask, "loopTask", ARDUINO_LOOP_STACK_SIZE, NULL, 1, &loopTaskHandle, 1);
 }

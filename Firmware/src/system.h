@@ -1,18 +1,31 @@
 #pragma once
-#include <SPI.h>
+
 #include <libriccore/riccoresystem.h>
 
+#include <string_view>
+#include <array>
+
+//config includes
 #include "Config/systemflags_config.h"
 #include "Config/commands_config.h"
 #include "Config/pinmap_config.h"
+#include "Config/types.h"
 
-#include <libriccore/networkinterfaces/can/canbus.h>
+#include <SPI.h>
+#include <Wire.h>
+
+
 
 #include "Commands/commands.h"
 
+#include <libriccore/networkinterfaces/can/canbus.h>
+
+#include "Sensors/dps310.h"
 #include "Sensors/MPRLS0001BA00001A.h"
-#include "Sensors/DPS310.h"
+
+
 #include "Storage/sdfat_store.h"
+
 
 class System : public RicCoreSystem<System,SYSTEM_FLAG,Commands::ID>
 {
@@ -24,21 +37,36 @@ class System : public RicCoreSystem<System,SYSTEM_FLAG,Commands::ID>
 
         void systemUpdate();
 
-        SPIClass SDSPI;
-        SPIClass SNSRSPI;
+        //board communication
+        SPIClass vspi;
+        SPIClass hspi;
 
         CanBus<SYSTEM_FLAG> canbus;
 
-        MPRLS0001BA00001A P1;
-        MPRLS0001BA00001A P2;
-        MPRLS0001BA00001A P3;
-        MPRLS0001BA00001A P4;
-        MPRLS0001BA00001A P5;
-        DPS310 BAR;
+        DPS310 baro;
 
-        SdFat_Store SD;
+        SdFat_Store primarysd;
 
-    // private:
+        MPRLS0001BA00001A pete1;
+        MPRLS0001BA00001A pete2;
+        MPRLS0001BA00001A pete3;
+        MPRLS0001BA00001A pete4;
+        MPRLS0001BA00001A pete5;
+        
 
+    private:
+
+        void setupSPI();
+        void setupPins();
+        void loadConfig();
+        void initializeLoggers();
+        void configureNetwork();
+        void logReadings();
+        uint32_t telemetry_log_delta = 5000;
+        uint32_t prev_telemetry_log_time;
+        
+        static constexpr std::string_view log_path = "/Logs";
+        static constexpr std::string_view config_path = "/Config/rml.jsonc";
+        
 
 };

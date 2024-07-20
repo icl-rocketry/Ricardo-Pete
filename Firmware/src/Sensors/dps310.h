@@ -5,7 +5,6 @@
 
 #include "Config/types.h"
 
-#include "sensorStructs.h"
 
 class DPS310 : private Dps3xx{
 
@@ -14,9 +13,14 @@ class DPS310 : private Dps3xx{
 
         void setup();
 
-        void update(SensorStructs::BARO_t &data);
+        void update();
 
         void calibrateBaro();
+
+        float getPressure() {return baro_pressure;}
+        float getTemperature() {return baro_temperature;}
+        float getAltitude() {return baro_altitude;}
+
 
     private:
         SPIClass & _spi;
@@ -25,6 +29,10 @@ class DPS310 : private Dps3xx{
         Types::CoreTypes::SystemStatus_t& _systemstatus;
         const uint8_t _cs;
         bool _initialized;
+
+        float baro_pressure;
+        float baro_temperature;
+        float baro_altitude;
 
         /**
          * @brief Reference pressure and temp for altitude calculation
@@ -39,19 +47,19 @@ class DPS310 : private Dps3xx{
          * @param pressure 
          * @param temp 
          */
-        void readDPS(float& pressure,float& temperature);
+        void readDPS();
 
         
         /**
          * @brief  Temperature Measurement rate 
          * 
          */
-        static constexpr int temp_mr = 6;
+        static constexpr int temp_mr = 3;
         /**
          * @brief Temperature Over sampling rate
          * 
          */
-        static constexpr int temp_osr = 4;
+        static constexpr int temp_osr = 1;
         /**
          * @brief Pressure Measurement Rate
          * 
@@ -61,8 +69,11 @@ class DPS310 : private Dps3xx{
          * @brief Pressure Over sampling rate
          * 
          */
-        static constexpr int press_osr = 4;
+        static constexpr int press_osr = 3;
 
         float toAltitude(const float& pressure);
+
+        void loadDPSCalibrationValues();
+        void writeDPSCalibrationValues();
 
 };
