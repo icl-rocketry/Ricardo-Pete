@@ -57,11 +57,13 @@ void MPRLS0001BA00001A::update(){
 
 void MPRLS0001BA00001A::clearRegister()
 {
+    spi.beginTransaction(SPISettings(500000, MSBFIRST, SPI_MODE0));
     digitalWrite(cs, LOW); // sensor is active
     spi.transfer(0xAA);
     spi.transfer(0x00);
     spi.transfer(0x00);
     digitalWrite(cs, HIGH); // sensor is idle
+    spi.endTransaction();
 
 }
 
